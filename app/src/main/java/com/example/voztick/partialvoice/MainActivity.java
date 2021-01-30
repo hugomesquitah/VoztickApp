@@ -17,6 +17,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -208,12 +209,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReadyForSpeech(final Bundle params) {
             Log.d(TAG, "onReadyForSpeech");
+            command.setGravity(Gravity.CENTER_HORIZONTAL);
             command.setText("Ouvindo...");
         }
 
         @Override
         public void onBeginningOfSpeech() {
             Log.d(TAG, "onBeginningOfSpeech");
+            command.setGravity(Gravity.CENTER_HORIZONTAL);
             command.setText("Ouvindo...");
             start = System.currentTimeMillis();
         }
@@ -235,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onError(final int error) {
             Log.d(TAG, "error " + error);
+            command.setGravity(Gravity.CENTER_HORIZONTAL);
             command.setText("");
             if (error == 6 || error == 7) {
                 restartListening();
@@ -266,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
             if (commandIsValid(stringCommand)) {
                 stringCommand = stringCommand.trim().replaceAll(" +", ",");
                 final String[] r = stringCommand.split(",");
+                command.setGravity(Gravity.CENTER_HORIZONTAL);
                 command.setText("Comando enviado:\n");
                 for (final String s : r) {
                     Arrays.stream(TextCommandsEnum.values()).forEach(new Consumer<TextCommandsEnum>() {
