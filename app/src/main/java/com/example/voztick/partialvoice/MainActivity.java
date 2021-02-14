@@ -61,11 +61,6 @@ public class MainActivity extends AppCompatActivity {
     //Setando contexto dos logs
     private static final String TAG = "MyActivity";
 
-    int result;
-    int actualsize;
-    //Socket socket;
-    final int recordCode = 0;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,19 +71,52 @@ public class MainActivity extends AppCompatActivity {
         }
         requestRecordAudioPermission();
 
-
         command = (TextView) findViewById(R.id.commandText);
+        micButton = (ImageButton) findViewById(R.id.micButton);
+        bluetoothBtn = (Button) findViewById(R.id.bluetoothButton);
+
+
         speech = SpeechRecognizer.createSpeechRecognizer(this);
         speech.setRecognitionListener(new listener());
+        ActivityCompat.requestPermissions(
+                this, new String[]{Manifest.permission.RECORD_AUDIO}, 19);
+
+        //Função do Botão de Bluetooth
+        if (bluetoothAdapter == null) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Seu dispositivo não suporta bluetooth", Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                final Intent ativaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(ativaBluetooth, bluetoothRequest);
+            }
+        }
+        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                if (bluetoothIsConnected) {
+                    try {
+                        bluetoothSocket.close();
+                        bluetoothIsConnected = false;
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    final Intent abreLista = new Intent(
+                            MainActivity.this, DeviceList.class);
+                    startActivityForResult(abreLista, bluetoothPair);
+                }
+            }
+        });
 
         // Função do botão de Microfone
-        micButton = (ImageButton) findViewById(R.id.micButton);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 19);
         micButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 if (!isListenning) {
-                    speech.startListening(getIntent());
+                    speech.startListening(getRecognizerIntent());
                     isListenning = true;
                 } else {
                     speech.stopListening();
@@ -97,41 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        //Função do Botão de Bluetooth
-        bluetoothBtn = (Button) findViewById(R.id.bluetoothButton);
-        if (bluetoothAdapter == null) {
-            Toast.makeText(getApplicationContext(), "Seu dispositivo não suporta bluetooth", Toast.LENGTH_LONG).show();
-            finish();
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                final Intent ativaBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(ativaBluetooth, bluetoothRequest);
-            }
-        }
-
-        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (bluetoothIsConnected) {
-                    try {
-                        bluetoothSocket.close();
-                        //  bluetoothBtn.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-                        bluetoothIsConnected = false;
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    //connect
-                    final Intent abreLista = new Intent(MainActivity.this, DeviceList.class);
-                    startActivityForResult(abreLista, bluetoothPair);
-                }
-
-
-            }
-        });
-
 
     }
 
@@ -193,8 +186,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public Intent getIntent() {
+    public Intent getRecognizerIntent() {
         final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
@@ -252,12 +244,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
+
+
         @Override
         public void onResults(final Bundle results) {
             final ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
-            final StringBuilder stringBuilder = new StringBuilder();
-
             String stringCommand = "";
 
             if (matches != null) {
@@ -265,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 restartListening();
             }
-
 
             if (commandIsValid(stringCommand)) {
                 stringCommand = stringCommand.trim().replaceAll(" +", ",");
@@ -277,13 +267,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void accept(TextCommandsEnum tc) {
                             if(s.contains(tc.getAlias())){
-//                                if(bluetoothIsConnected) {
-//                                    try {
-//                                        outputStream.write(tc.getJoystickCommand().getBytes());
-//                                    } catch (IOException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
+                                if(bluetoothIsConnected) {
+                                    try {
+                                        outputStream.write(tc.getJoystickCommand().getBytes());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                                 command.setText(command.getText() + " " + tc.name());
                             }
                         }
@@ -293,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
             elapsed = System.currentTimeMillis() - start;
             Log.d(TAG, "Tempo de envio: " + elapsed);
             restartListening();
-
         }
 
         @Override
@@ -316,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
             elapsed = 0;
             speech.stopListening();
             isListenning = false;
-            speech.startListening(getIntent());
+            speech.startListening(getRecognizerIntent());
             isListenning = true;
         }
     }
