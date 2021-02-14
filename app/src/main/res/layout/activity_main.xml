@@ -7,59 +7,50 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/commandText2"
-        android:layout_width="wrap_content"
-        android:layout_height="19dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.436" />
-
-    <TextView
         android:id="@+id/commandText"
         android:layout_width="wrap_content"
         android:layout_height="120dp"
-        android:text="Aperte o botão para iniciar"
+        android:fontFamily="sans-serif-smallcaps"
+        android:gravity="center_horizontal"
+        android:text="Aperte o botão abaixo para iniciar reconhecimento de fala"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.622" />
+        app:layout_constraintVertical_bias="0.548" />
 
     <ImageButton
         android:id="@+id/micButton"
-        android:layout_width="76dp"
-        android:layout_height="62dp"
+        style="@android:style/Widget.DeviceDefault.Light.ImageButton"
+        android:layout_width="263dp"
+        android:layout_height="151dp"
         android:layout_marginStart="154dp"
         android:layout_marginLeft="154dp"
         android:layout_marginEnd="154dp"
         android:layout_marginRight="154dp"
-        android:layout_marginBottom="145dp"
+        android:layout_marginBottom="56dp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/presence_audio_away" />
 
     <Button
         android:id="@+id/bluetoothButton"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="291dp"
-        android:layout_marginRight="291dp"
-        android:layout_marginBottom="164dp"
-        android:text="BT"
-        app:layout_constraintBottom_toTopOf="@+id/commandText"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="264dp"
+        android:layout_height="149dp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="PAREAR BLUETOOTH"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.121" />
 
 </android.support.constraint.ConstraintLayout>
